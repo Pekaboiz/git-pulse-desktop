@@ -1,7 +1,12 @@
 import {useState} from 'react';
 import logo from './assets/images/logo-universal.png';
 import './App.css';
+import './style.css'
 import {Greet} from "../wailsjs/go/main/App";
+import { Route, Routes } from 'react-router-dom';
+import Sidebar from './pages/Sidebar';
+import Header from './pages/Header';
+import Dashboard from './pages/Dashboard';
 
 function App() {
     const [resultText, setResultText] = useState("Please enter your name below 👇");
@@ -15,11 +20,15 @@ function App() {
 
     return (
         <div id="App">
-            <img src={logo} id="logo" alt="logo"/>
-            <div id="result" className="result">{resultText}</div>
-            <div id="input" className="input-box">
-                <input id="name" className="input" onChange={updateName} autoComplete="off" name="input" type="text"/>
-                <button className="btn" onClick={greet}>Greet</button>
+            <div className="app-layout">
+                <Sidebar/>
+                <Header/>
+                <div className="content">
+                    <Routes>
+                        <Route path="/" element={<Dashboard/>} />
+                        <Route path="/settings" element={<div> another </div>} />
+                    </Routes>
+                </div>
             </div>
         </div>
     )
