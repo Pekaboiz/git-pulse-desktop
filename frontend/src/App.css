@@ -57,3 +57,458 @@
     border: none;
     background-color: rgba(255, 255, 255, 1);
 }
+
+/* ─── Shared pieces ──────────────────────────── */
+.lang-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block}
+.repo-tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;color:var(--text-3)}
+.repo-name{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text-1);margin-bottom:3px}
+.repo-name span{color:var(--text-3);font-weight:400}
+.repo-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.repo-time{font-family:var(--mono);font-size:11px;color:var(--text-3)}
+.status-badge{display:inline-flex;align-items:center;font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid}
+.status-badge.clean{color:var(--accent);border-color:rgba(63,185,80,.3);background:var(--accent-dim)}
+.status-badge.changes{color:var(--orange);border-color:rgba(210,153,34,.3);background:rgba(210,153,34,.08)}
+.status-badge.behind{color:var(--blue);border-color:rgba(88,166,255,.3);background:var(--blue-dim)}
+.private-badge{font-family:var(--mono);font-size:10px;color:var(--text-3);border:1px solid var(--border);padding:0 5px;border-radius:3px;margin-left:6px}
+.section{margin-bottom:24px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:13px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono)}
+.section-link{font-size:12px;color:var(--blue);cursor:pointer;text-decoration:none}
+.page-filters{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.filter-tabs{display:flex;gap:2px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r1);padding:3px}
+.filter-tab{padding:4px 12px;border-radius:4px;border:none;background:transparent;color:var(--text-2);font-size:12px;font-family:var(--mono);cursor:pointer;transition:all var(--t)}
+.filter-tab:hover{color:var(--text-1)}
+.filter-tab.active{background:var(--bg-elevated);color:var(--text-1)}
+.filter-count{font-family:var(--mono);font-size:11px;color:var(--text-3);margin-left:auto}
+.file-add{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.file-del{font-family:var(--mono);font-size:11px;color:var(--red)}
+.empty-state{display:flex;flex-direction:column;align-items:center;gap:8px;padding:48px;color:var(--text-3)}
+.empty-icon{font-size:24px;opacity:.4}
+.empty-text{font-family:var(--mono);font-size:13px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ─── Repos page ─────────────────────────────── */
+.repos-layout{display:grid;grid-template-columns:320px 1fr;gap:16px;height:calc(100vh - var(--hh) - 48px)}
+.repos-list-panel{display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.repos-filters{display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.repos-scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+.repo-list-item{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 12px 12px 14px;border-radius:var(--r1);border:1px solid var(--border);cursor:pointer;transition:all var(--t);position:relative;overflow:hidden;background:var(--bg-surface)}
+.repo-list-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent;transition:background var(--t)}
+.repo-list-item:hover{border-color:var(--text-3);background:var(--bg-elevated)}
+.repo-list-item:hover::before,.repo-list-item.active::before{background:var(--accent)}
+.repo-list-item.active{border-color:var(--accent);background:var(--bg-elevated)}
+.repo-list-item.has-changes{border-color:rgba(210,153,34,.3)}
+.repo-list-item.has-changes::before{background:var(--orange)}
+.repo-list-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.repo-detail-panel{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r2);padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:20px}
+.repo-detail-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.repo-detail-title{font-family:var(--mono);font-size:15px;font-weight:600;margin-bottom:6px}
+.repo-detail-title span{color:var(--text-3);font-weight:400}
+.repo-detail-meta{display:flex;align-items:center;gap:10px}
+.repo-detail-stats{display:flex;gap:24px;padding:16px;background:var(--bg-base);border-radius:var(--r1);border:1px solid var(--border)}
+.detail-stat{display:flex;flex-direction:column;gap:3px}
+.detail-stat-val{font-family:var(--mono);font-size:20px;font-weight:600;line-height:1}
+.detail-stat-label{font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+
+/* ─── Dashboard ──────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;display:flex;flex-direction:column;gap:6px;transition:border-color var(--t)}
+.stat-card:hover{border-color:var(--text-3)}
+.stat-label{font-family:var(--mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+.stat-value{font-family:var(--mono);font-size:26px;font-weight:600;line-height:1}
+.stat-change{font-size:12px;color:var(--text-3)}
+.stat-change.up{color:var(--accent)}
+.stat-change.down{color:var(--red)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.repo-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:8px;cursor:pointer;transition:all var(--t);position:relative;overflow:hidden}
+.repo-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent;transition:background var(--t)}
+.repo-card:hover{border-color:var(--text-3);background:var(--bg-elevated)}
+.repo-card:hover::before{background:var(--accent)}
+.repo-card.has-changes::before{background:var(--orange)}
+.repo-card.has-changes{border-color:rgba(210,153,34,.3)}
+.repo-status{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+
+/* ─── Forms ──────────────────────────────────── */
+.form-input{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--r1);color:var(--text-1);font-family:var(--sans);font-size:13px;padding:7px 11px;outline:none;transition:border-color var(--t);width:100%}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--text-3)}
+.form-select{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--r1);color:var(--text-1);font-family:var(--mono);font-size:12px;padding:7px 11px;outline:none;cursor:pointer;transition:border-color var(--t)}
+.form-select:focus{border-color:var(--accent)}
+.form-label{display:block;font-family:var(--mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.form-hint{font-size:12px;color:var(--text-3);margin-top:6px}
+.input-row{display:flex;gap:8px}
+.input-row .form-input{flex:1}
+
+
+/* ─── Commits page ───────────────────────────── */
+.commits-table{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.commits-thead{display:grid;grid-template-columns:80px 1fr 160px 100px 140px;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+.commit-row{display:grid;grid-template-columns:80px 1fr 160px 100px 140px;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border-sub);cursor:pointer;transition:background var(--t);align-items:center}
+.commit-row:last-child{border-bottom:none}
+.commit-row:hover{background:var(--bg-elevated)}
+.commit-hash{font-family:var(--mono);font-size:12px;color:var(--blue);background:var(--blue-dim);padding:2px 7px;border-radius:4px;display:inline-block}
+.commit-msg-col{display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.commit-msg{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.commit-author{font-family:var(--mono);font-size:11px;color:var(--text-3)}
+.commit-repo-col{display:flex;flex-direction:column;gap:2px}
+.commit-repo-name{font-size:12px;color:var(--text-2)}
+.commit-branch{font-family:var(--mono);font-size:11px;color:var(--text-3);background:var(--bg-elevated);padding:1px 5px;border-radius:3px}
+.commit-changes{display:flex;align-items:center;gap:6px}
+.commit-date{font-family:var(--mono);font-size:11px;color:var(--text-3)}
+
+/* ─── Branches page ──────────────────────────── */
+.branches-table{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.branch-row{display:grid;grid-template-columns:220px 130px 1fr auto;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border-sub);align-items:center;transition:background var(--t)}
+.branch-row:last-child{border-bottom:none}
+.branch-row:hover{background:var(--bg-elevated)}
+.branch-row.is-current{background:rgba(63,185,80,.04)}
+.branch-name-col{display:flex;align-items:center;gap:6px}
+.branch-name{font-family:var(--mono);font-size:12px;display:flex;align-items:center;gap:5px}
+.branch-dot{color:var(--accent);font-size:8px}
+.badge-default{font-family:var(--mono);font-size:10px;color:var(--text-3);border:1px solid var(--border);padding:1px 6px;border-radius:3px}
+.badge-current{font-family:var(--mono);font-size:10px;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(63,185,80,.3);padding:1px 6px;border-radius:3px}
+.branch-sync{display:flex;flex-direction:column;gap:2px}
+.b-ahead{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.b-behind{font-family:var(--mono);font-size:11px;color:var(--blue)}
+.b-synced{font-family:var(--mono);font-size:11px;color:var(--text-3)}
+.branch-last{display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.branch-actions{display:flex;gap:4px}
+
+/* ─── Settings page ──────────────────────────── */
+.settings-layout{max-width:640px;display:flex;flex-direction:column;gap:8px}
+.settings-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.settings-card-title{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;padding:12px 16px 10px;border-bottom:1px solid var(--border);background:var(--bg-elevated)}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border-sub)}
+.settings-row:last-child{border-bottom:none}
+.s-label{flex:1}
+.s-label-title{font-size:13.5px;font-weight:500}
+.s-label-desc{font-size:12px;color:var(--text-3);margin-top:2px}
+.settings-sub{padding-left:24px;border-left:2px solid var(--border);margin:0 16px 4px;transition:opacity var(--t)}
+.settings-sub.disabled{opacity:.4;pointer-events:none}
+.toggle{width:36px;height:20px;border-radius:10px;border:none;cursor:pointer;position:relative;transition:background var(--t);flex-shrink:0;padding:0}
+.toggle.on{background:var(--accent)}
+.toggle.off{background:var(--border)}
+.toggle-knob{position:absolute;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left var(--t);display:block}
+.toggle.on .toggle-knob{left:18px}
+.toggle.off .toggle-knob{left:2px}
+.theme-selector{display:flex;gap:4px}
+.theme-opt{padding:5px 12px;border-radius:var(--r1);border:1px solid var(--border);background:transparent;color:var(--text-2);font-size:12px;font-family:var(--mono);cursor:pointer;transition:all var(--t)}
+.theme-opt:hover{color:var(--text-1);border-color:var(--text-3)}
+.theme-opt.active{background:var(--bg-elevated);color:var(--text-1);border-color:var(--accent)}
+.settings-about{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.about-logo{width:36px;height:36px;background:var(--accent);border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 12px var(--accent-glow);flex-shrink:0}
+.settings-footer{display:flex;justify-content:flex-end;padding-top:4px}
+
+/* ----------------- User ------------------- */
+
+/* ─── User page ──────────────────────────────────────────── */
+.user-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 860px;
+}
+
+/* Header */
+.user-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 24px;
+}
+
+.user-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.user-avatar-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: block;
+}
+
+.user-avatar-status {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg-surface);
+  box-shadow: 0 0 6px var(--accent-glow);
+}
+
+.user-display-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-1);
+  line-height: 1.2;
+}
+
+.user-handle {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-3);
+  margin-top: 2px;
+  margin-bottom: 6px;
+}
+
+.user-bio {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+
+.user-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.user-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.user-meta-icon {
+  font-size: 12px;
+}
+
+/* Stats row */
+.user-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.user-stat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: border-color var(--t);
+}
+
+.user-stat-card:hover {
+  border-color: var(--text-3);
+}
+
+.user-stat-val {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-1);
+  line-height: 1;
+}
+
+.user-stat-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.user-stat-change {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.user-stat-change.up   { color: var(--accent); }
+.user-stat-change.down { color: var(--red); }
+
+/* Body */
+.user-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.user-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  overflow: hidden;
+}
+
+.user-section .section-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+
+/* Accounts */
+.accounts-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-sub);
+  transition: background var(--t);
+}
+
+.account-card:last-child {
+  border-bottom: none;
+}
+
+.account-card:hover {
+  background: var(--bg-elevated);
+}
+
+.account-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.account-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.account-handle {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 1px;
+}
+
+.account-detail {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.account-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid;
+}
+
+.account-badge.connected {
+  color: var(--accent);
+  border-color: rgba(63, 185, 80, 0.3);
+  background: var(--accent-dim);
+}
+
+.account-badge.disconnected {
+  color: var(--text-3);
+  border-color: var(--border);
+  background: var(--bg-elevated);
+}
+
+/* Tokens */
+.tokens-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.token-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-sub);
+  transition: background var(--t);
+}
+
+.token-row:last-child {
+  border-bottom: none;
+}
+
+.token-row:hover {
+  background: var(--bg-elevated);
+}
+
+.token-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--r1);
+}
+
+.token-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.token-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.token-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.token-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-2);
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.token-expires {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.token-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}

@@ -1,23 +1,17 @@
-import {useState} from 'react';
-import logo from './assets/images/logo-universal.png';
 import './App.css';
 import './style.css'
-import {Greet} from "../wailsjs/go/main/App";
 import { Route, Routes } from 'react-router-dom';
 import Sidebar from './pages/Sidebar';
 import Header from './pages/Header';
 import Dashboard from './pages/Dashboard';
+import Settings from './pages/Settings';
+import Commits from './pages/Commits';
+import Branches from './pages/Branches';
+import User from './pages/User';
+import ActivityItem from './components/ActivityItem';
+import Repos from './components/Repos';
 
 function App() {
-    const [resultText, setResultText] = useState("Please enter your name below 👇");
-    const [name, setName] = useState('');
-    const updateName = (e: any) => setName(e.target.value);
-    const updateResultText = (result: string) => setResultText(result);
-
-    function greet() {
-        Greet(name).then(updateResultText);
-    }
-
     return (
         <div id="App">
             <div className="app-layout">
@@ -26,7 +20,13 @@ function App() {
                 <div className="content">
                     <Routes>
                         <Route path="/" element={<Dashboard/>} />
-                        <Route path="/settings" element={<div> another </div>} />
+                        <Route path="/repos" element={<Repos/>} />
+                        <Route path="/commits" element={<Commits/>} />
+                        <Route path="/branches" element={<Branches/>} />
+                        <Route path="/activity" element={<ActivityItem/>} />
+                        
+                        <Route path="/settings" element={<Settings/>} />
+                        <Route path="/user" element={<User/>} />
                     </Routes>
                 </div>
             </div>

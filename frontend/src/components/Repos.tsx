@@ -1,74 +1,181 @@
-import React from 'react'
+import { useEffect, useState } from "react";
+import { GetReps } from "../../wailsjs/go/main/App";
+import { types } from "../../wailsjs/go/models";
+import RepoItem from "../components/RepoItem";
 
-type Props = {}
+const PAGE_SIZE = 10;
 
-function Repos({}: Props) {
+function Repos() {
+  const [reps, setReps] = useState<types.RepoItem[]>([]);
+  const [page, setPage] = useState(0);
+
+  useEffect(() => {
+    GetReps().then(setReps);
+  }, []);
+
+  const start = page * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
+  const currentPage = reps.slice(start, end);
+  const totalPages = Math.ceil(reps.length / PAGE_SIZE);
+
   return (
-      <div className="section">
-        <div className="section-header">
-          <span className="section-title">Repositories</span>
-          <a className="section-link">View all →</a>
+    <div>
+      <div id="page-repos" className="page repos-layout">
+        <div className="repos-list-panel">
+          <div className="repos-filters">
+            <input
+              className="form-input"
+              placeholder="Search repositories..."
+            />
+            <div className="filter-tabs">
+              <button className="filter-tab active">All (6)</button>
+              <button className="filter-tab">changes</button>
+              <button className="filter-tab">clean</button>
+              <button className="filter-tab">behind</button>
+            </div>
+          </div>
+          <div className="repos-scroll">
+            <RepoItem reps={currentPage} />
+
+            <div style={{ display: "flex", gap: "8px", marginTop: "16px" }}>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => setPage((p) => p - 1)}
+                disabled={page === 0}
+              >
+                ← Prev
+              </button>
+              <span
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "12px",
+                  color: "var(--text-muted)",
+                  alignSelf: "center",
+                }}
+              >
+                {page + 1} / {totalPages}
+              </span>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => setPage((p) => p + 1)}
+                disabled={end >= reps.length}
+              >
+                Next →
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="repo-list">
-          <div className="repo-card has-changes">
+
+        <div className="repo-detail-panel">
+          <div className="repo-detail-header">
             <div>
-              <div className="repo-name"><span>kostapolin / </span>git-pulse-desktop</div>
-              <div className="repo-meta">
-                <span className="repo-tag"><span className="lang-dot" style={{background: '#00add8'}}></span>Go</span>
+              <div className="repo-detail-title">
+                <span>kostapolin / </span>git-pulse-desktop
+              </div>
+              <div className="repo-detail-meta">
+                <span className="repo-tag">
+                  <span
+                    className="lang-dot"
+                    style={{ background: "#00add8" }}
+                  ></span>
+                  Go
+                </span>
                 <span className="repo-tag">⎇ main</span>
-                <span className="repo-tag">◆ 142</span>
               </div>
             </div>
-            <div className="repo-status">
-              <span className="status-badge changes">5 changes</span>
-              <span className="repo-time">2 min ago</span>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button className="btn btn-ghost btn-sm">↻ Sync</button>
+              <button className="btn btn-danger-ghost btn-sm">Remove</button>
             </div>
           </div>
-          <div className="repo-card">
-            <div>
-              <div className="repo-name"><span>kostapolin / </span>dotfiles</div>
-              <div className="repo-meta">
-                <span className="repo-tag"><span className="lang-dot" style={{background: "#89e051"}}></span>Shell</span>
-                <span className="repo-tag">⎇ main</span>
-                <span className="repo-tag">◆ 89</span>
-              </div>
+          <div className="repo-detail-stats">
+            <div className="detail-stat">
+              <span className="detail-stat-val">142</span>
+              <span className="detail-stat-label">Commits</span>
             </div>
-            <div className="repo-status">
-              <span className="status-badge clean">Clean</span>
-              <span className="repo-time">1 hour ago</span>
+            <div className="detail-stat">
+              <span
+                className="detail-stat-val"
+                style={{ color: "var(--orange)" }}
+              >
+                5 changes
+              </span>
+              <span className="detail-stat-label">Status</span>
             </div>
-          </div>
-          <div className="repo-card">
-            <div>
-              <div className="repo-name"><span>kostapolin / </span>go-microservices</div>
-              <div className="repo-meta">
-                <span className="repo-tag"><span className="lang-dot" style={{background:"#00add8"}}></span>Go</span>
-                <span className="repo-tag">⎇ feature/auth</span>
-                <span className="repo-tag">◆ 56</span>
-              </div>
-            </div>
-            <div className="repo-status">
-              <span className="status-badge behind">3 behind</span>
-              <span className="repo-time">3 hours ago</span>
+            <div className="detail-stat">
+              <span className="detail-stat-val" style={{ fontSize: "14px" }}>
+                2 min ago
+              </span>
+              <span className="detail-stat-label">Last activity</span>
             </div>
           </div>
-          <div className="repo-card">
-            <div>
-              <div className="repo-name"><span>work-org / </span>api-gateway</div>
-              <div className="repo-meta">
-                <span className="repo-tag"><span className="lang-dot" style={{background:"#3178c6"}}></span>TypeScript</span>
-                <span className="repo-tag">⎇ develop</span>
-                <span className="repo-tag">◆ 318</span>
-              </div>
+          <div>
+            <div className="section-title" style={{ marginBottom: "10px" }}>
+              Recent commits
             </div>
-            <div className="repo-status">
-              <span className="status-badge clean">Clean</span>
-              <span className="repo-time">Yesterday</span>
+            <div className="activity-list">
+              <div className="activity-item" style={{ cursor: "pointer" }}>
+                <div className="activity-icon commit">◆</div>
+                <div className="activity-body">
+                  <div className="activity-text">
+                    <strong>feat: add sidebar navigation component</strong>
+                  </div>
+                  <div className="activity-time">
+                    <code style={{}/*style="font-family:var(--mono);font-size:11px;color:var(--blue);background:var(--blue-dim);padding:1px 5px;border-radius:4px"*/}>
+                      a3f91bc
+                    </code>{" "}
+                    · kostapolin · Today 14:32
+                  </div>
+                </div>
+              </div>
+              <div className="activity-item" style={{ cursor: "pointer" }}>
+                <div className="activity-icon commit">◆</div>
+                <div className="activity-body">
+                  <div className="activity-text">
+                    <strong>fix: routing issue on settings page</strong>
+                  </div>
+                  <div className="activity-time">
+                    <code style={{}/*style="font-family:var(--mono);font-size:11px;color:var(--blue);background:var(--blue-dim);padding:1px 5px;border-radius:4px"*/}>
+                      b2e80ab
+                    </code>{" "}
+                    · kostapolin · Today 12:15
+                  </div>
+                </div>
+              </div>
+              <div className="activity-item" style={{ cursor: "pointer" }}>
+                <div className="activity-icon commit">◆</div>
+                <div className="activity-body">
+                  <div className="activity-text">
+                    <strong>chore: update go dependencies</strong>
+                  </div>
+                  <div className="activity-time">
+                    <code style={{}/*style="font-family:var(--mono);font-size:11px;color:var(--blue);background:var(--blue-dim);padding:1px 5px;border-radius:4px"*/}>
+                      c1d70cd
+                    </code>{" "}
+                    · kostapolin · Today 10:00
+                  </div>
+                </div>
+              </div>
+              <div className="activity-item" style={{ cursor: "pointer" }}>
+                <div className="activity-icon commit">◆</div>
+                <div className="activity-body">
+                  <div className="activity-text">
+                    <strong>style: update global CSS design tokens</strong>
+                  </div>
+                  <div className="activity-time">
+                    <code style={{}/*style="font-family:var(--mono);font-size:11px;color:var(--blue);background:var(--blue-dim);padding:1px 5px;border-radius:4px"*/}>
+                      d0c60ef
+                    </code>{" "}
+                    · kostapolin · Yesterday 18:42
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-  )
+    </div>
+  );
 }
 
-export default Repos
+export default Repos;
